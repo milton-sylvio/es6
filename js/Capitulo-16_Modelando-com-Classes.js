@@ -63,7 +63,41 @@ class SUV extends Car {
     }
 }
 
-const suv = new SUV('IZ35', '69853213', 4);
-suv.cambio();
-suv.walking();
-console.log(suv.model);
+// const suv = new SUV('IZ35', '69853213', 4);
+// suv.cambio();
+// suv.walking();
+// console.log(suv.model);
+
+/*
+ * 16.5	MÉTODOS	ESTÁTICOS
+ **/
+class Casa {
+    static abrirPorta(){
+        console.log('Abriram a porta!!!')
+    }
+}
+Casa.abrirPorta();
+
+/*
+ * 16.6	ATRIBUTOS PRIVADOS COM WEAKMAP
+ **/
+/* 
+    A atual sintaxe "class" do ES não tem suporte à propriedades privadas, nesse caso, podemos
+    utilizar o WeakMap.
+*/
+
+const propriedades = new WeakMap();
+class VideoGame {
+    constructor(nome, controles, saida, midia){
+        propriedades.set(this, {
+            nome, controles, saida, midia
+        });
+    }
+
+    recuperaPropriedade(propriedade) {
+        return propriedades.get(this)[propriedade];
+    }
+}
+
+const v_g = new VideoGame('XBox 360', 2, 'hdmi', 'DVD');
+console.log(v_g.recuperaPropriedade('nome'));
