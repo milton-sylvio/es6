@@ -1,3 +1,3 @@
 .vscode/launch.json
 es6.code-workspace
-base/*
+base/node_modules/*
