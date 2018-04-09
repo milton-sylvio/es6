@@ -4,23 +4,54 @@
  * METAPROGRAMAÇÃO COM PROXIES
  * 
  **************************************************************************************************/
-/**
- * 19.3	O ESQUELETO	DE	UMA	PROMISE
- */
-let promise = new Promise((resolve, reject) => {
-    
-    resolve("ok!");
+class Usuario {
+    constructor(login, senha){
+        this.login = login;
+        this.senha = senha;
+    }
+}
+
+const usuario = new Usuario('SuperJS', '123');
+
+const proxys = new Proxy(usuario, {
+  get(alvo, propriedade) {
+    console.log(`${propriedade} foi solicitada!`);
+    return alvo[propriedade];
+  }
 });
 
-promise
-    .then(data => {
-        console.log(`resultado positivo: ${data}`);
-        throw new Error("Moio!");
-        return data;
-    })
-    .then(data => {
-        console.log(`resultado positivo 2: ${data}`);
-    })
-    .catch(data => {
-        console.log(`resultado negativo: ${data}`);
-    });
+// console.log(proxys.login);
+// console.log(proxys.senha);
+
+const validador = {
+    set(alvo, propriedade, valor) {
+        if (propriedade === 'idade') {
+            if(!Number.isInteger(valor)) {
+                throw new TypeError('A idade não é um número!');
+            }
+        }
+
+        alvo[propriedade] = valor;
+    }
+}
+const usuarios = new Proxy({}, validador);
+usuarios.idade = 10;
+// console.log(usuarios.idade);	//	10
+// usuarios.idade	=	'dez';	//	TypeError:	A	idade	não	é	um	número!
+// usuarios.idade	=	{};	//	TypeError:	A	idade	não	é	um	número!
+// usuarios.idade	=	true;	//	TypeError:	A	idade	não	é	um	número!
+
+/**
+ * 20.4	DESATIVANDO	UM	PROXY
+ * 
+ * É possível revocar um proxy,	ou seja, desligá-lo	de certa forma. 
+ * Para isso, construir	nosso proxy	com um Proxy.revocable.	
+ * 
+ * const {proxy, revoke} = Proxy.revocable(alvo, handler);
+ */
+
+const {proxy, revoke} = Proxy.revocable({}, {});
+proxy.teste = "teste";
+console.log(proxy.teste);	//	teste
+revoke();
+console.log(proxy.teste);	//	TypeError: Cannot perform 'get' on	a proxy	that has been revoked
